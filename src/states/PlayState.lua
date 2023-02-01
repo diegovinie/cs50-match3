@@ -208,6 +208,21 @@ end
     have matched and replaces them with new randomized tiles, deferring most of this
     to the Board class.
 ]]
+
+local function calcVarietyAward(tiles)
+    local variety = nil
+    for _, tile in pairs(tiles) do
+        if not variety then
+            variety = tile.variety
+
+        elseif not (variety == tile.variety) then
+            return 0
+        end
+    end
+
+    return variety - 1
+end
+
 function PlayState:calculateMatches()
     self.highlightedTile = nil
 
@@ -223,6 +238,13 @@ function PlayState:calculateMatches()
             self.score = self.score + #match * 50
             self.timer = self.timer + #match * TIME_ADD_MULT
 
+            local varietyAward = calcVarietyAward(match)
+
+            if varietyAward > 0 then
+                gSounds['next-level']:play()
+                local nextScore = self.score + #match * varietyAward * 100
+                self.score = nextScore
+            end
         end
 
         -- remove any tiles that matched from the board, making empty spaces
