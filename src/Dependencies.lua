@@ -47,6 +47,7 @@ gSounds = {
     ['match'] = love.audio.newSource('sounds/match.wav', 'static'),
     ['clock'] = love.audio.newSource('sounds/clock.wav', 'static'),
     ['game-over'] = love.audio.newSource('sounds/game-over.wav', 'static'),
+    ['hurray'] = love.audio.newSource('sounds/pickup.wav', 'static'),
     ['next-level'] = love.audio.newSource('sounds/next-level.wav', 'static')
 }
 
@@ -56,7 +57,7 @@ gTextures = {
 }
 
 gFrames = {
-    
+
     -- divided into sets for each tile type in this game, instead of one large
     -- table of Quads
     ['tiles'] = GenerateTileQuads(gTextures['main'])

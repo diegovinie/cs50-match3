@@ -55,6 +55,7 @@ function Board:calculateMatches()
 
     -- how many of the same color blocks in a row we've found
     local matchNum = 1
+    local hasShinny = false
 
     -- horizontal matches first
     for y = 1, 8 do
@@ -76,12 +77,26 @@ function Board:calculateMatches()
                 -- if we have a match of 3 or more up to now, add it to our matches table
                 if matchNum >= 3 then
                     local match = {}
+                    hasShinny = false
 
-                    -- go backwards from here by matchNum
                     for x2 = x - 1, x - matchNum, -1 do
+                        if self.tiles[y][x2].shinny then
+                            hasShinny = true
+                        end
+                    end
 
-                        -- add each tile to the match that's in that match
-                        table.insert(match, self.tiles[y][x2])
+                    if hasShinny then
+                       for xx = 1, #self.tiles[y] do
+                            table.insert(match, self.tiles[y][xx])
+                            gSounds['hurray']:stop()
+                            gSounds['hurray']:play()
+                        end
+                    else
+                        -- go backwards from here by matchNum
+                        for x2 = x - 1, x - matchNum, -1 do
+                            -- add each tile to the match that's in that match
+                            table.insert(match, self.tiles[y][x2])
+                        end
                     end
 
                     -- add this match to our total matches table
@@ -125,10 +140,25 @@ function Board:calculateMatches()
 
                 if matchNum >= 3 then
                     local match = {}
-
+                    hasShinny = false
                     for y2 = y - 1, y - matchNum, -1 do
-                        table.insert(match, self.tiles[y2][x])
+                        if self.tiles[y2][x].shinny then
+                            hasShinny = true
+                        end
                     end
+
+                    if hasShinny then
+                        for yy = 1, #self.tiles do
+                            table.insert(match, self.tiles[yy][x])
+                            gSounds['hurray']:stop()
+                            gSounds['hurray']:play()
+                        end
+                    else
+                        for y2 = y - 1, y - matchNum, -1 do
+                            table.insert(match, self.tiles[y2][x])
+                        end
+                    end
+
 
                     table.insert(matches, match)
                 end
@@ -145,10 +175,25 @@ function Board:calculateMatches()
         -- account for the last column ending with a match
         if matchNum >= 3 then
             local match = {}
+            hasShinny = false
 
-            -- go backwards from end of last row by matchNum
             for y = 8, 8 - matchNum + 1, -1 do
-                table.insert(match, self.tiles[y][x])
+                if self.tiles[y][x].shinny then
+                    hasShinny = true
+                end
+            end
+
+            if hasShinny then
+                for yy = 1, #self.tiles do
+                    table.insert(match, self.tiles[yy][x])
+                    gSounds['hurray']:stop()
+                    gSounds['hurray']:play()
+                end
+            else
+                -- go backwards from end of last row by matchNum
+                for y = 8, 8 - matchNum + 1, -1 do
+                    table.insert(match, self.tiles[y][x])
+                end
             end
 
             table.insert(matches, match)
@@ -255,6 +300,14 @@ function Board:getFallingTiles()
 
     return tweens
 end
+
+-- function Board:checkAnyShinny(matches)
+--     for _, tile in pairs(matches) do
+--         if tile.shinny then return true end
+--     end
+
+--     return false
+-- end
 
 function Board:render()
     for y = 1, #self.tiles do
