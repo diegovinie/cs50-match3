@@ -28,6 +28,7 @@ function BeginGameState:enter(def)
 
     -- grab level # from the def we're passed
     self.level = def.level
+    self.hardcore = def.hardcore
 
     -- spawn a board and place it toward the right
     self.board = Board(VIRTUAL_WIDTH - 272, 16, self.level)
@@ -62,7 +63,8 @@ function BeginGameState:enter(def)
                 :finish(function()
                     gStateMachine:change('play', {
                         level = self.level,
-                        board = self.board
+                        board = self.board,
+                        hardcore = self.hardcore
                     })
                 end)
             end)
